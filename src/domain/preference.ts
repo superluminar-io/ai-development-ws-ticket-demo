@@ -11,6 +11,7 @@ export type NotificationPreference = {
   channel: Channel
   priority: Priority
   quietHours?: QuietHours
+  priorityOverride?: string   // Bug 1: should be Priority, not string
 }
 
 export type PreferenceResult = {

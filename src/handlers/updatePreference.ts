@@ -11,6 +11,7 @@ export function updatePreference(input: Record<string, unknown>): PreferenceResu
     channel: input.channel as NotificationPreference['channel'],
     priority: input.priority as NotificationPreference['priority'],
     quietHours: input.quietHours as NotificationPreference['quietHours'],
+    priorityOverride: input.priorityOverride !== undefined ? String(input.priorityOverride) : undefined,
   }
 
   const currentHour = new Date().getHours()
