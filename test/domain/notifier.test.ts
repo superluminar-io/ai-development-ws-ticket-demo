@@ -26,4 +26,38 @@ describe('shouldSendNow', () => {
   it('sends when no quiet hours are set', () => {
     expect(shouldSendNow(base, 14)).toBe(true)
   })
+
+  it('suppresses during overnight quiet hours', () => {
+    const pref: NotificationPreference = {
+      ...base,
+      quietHours: { startHour: 22, endHour: 8 },
+    }
+    expect(shouldSendNow(pref, 2)).toBe(false)   // 2am is within 22–8
+  })
+
+  it('sends outside overnight quiet hours', () => {
+    const pref: NotificationPreference = {
+      ...base,
+      quietHours: { startHour: 22, endHour: 8 },
+    }
+    expect(shouldSendNow(pref, 14)).toBe(true)   // 2pm is outside 22–8
+  })
+
+  it('urgent bypasses quiet hours', () => {
+    const pref: NotificationPreference = {
+      ...base,
+      priority: 'urgent',
+      quietHours: { startHour: 22, endHour: 8 },
+    }
+    expect(shouldSendNow(pref, 2)).toBe(true)   // urgent ignores quiet hours
+  })
+
+  it('handles same-day quiet hours range', () => {
+    const pref: NotificationPreference = {
+      ...base,
+      quietHours: { startHour: 9, endHour: 17 },
+    }
+    expect(shouldSendNow(pref, 12)).toBe(false)   // noon is within 9–17
+    expect(shouldSendNow(pref, 20)).toBe(true)    // 8pm is outside 9–17
+  })
 })
